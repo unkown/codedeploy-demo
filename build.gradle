@@ -1,0 +1,60 @@
+buildscript {
+	ext {
+		springBootVersion = '1.4.3.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+//apply plugin: 'application'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+
+jar {
+	baseName = 'codedeploy-demo'
+	version = '1.0.0'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	// tag::jetty[]
+	compile("org.springframework.boot:spring-boot-starter-web") {
+		exclude module: "spring-boot-starter-tomcat"
+	}
+	compile("org.springframework.boot:spring-boot-starter-jetty")
+	// end::jetty[]
+	compile('org.springframework.boot:spring-boot-starter-actuator')
+	compile('org.springframework.boot:spring-boot-actuator-docs')
+//	compile('org.springframework.boot:spring-boot-starter-remote-shell')
+	compile('org.projectlombok:lombok')
+//	compileOnly('org.projectlombok:lombok')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+/*println(libsDir)
+println(distsDir)
+println(jar.baseName)
+println(jar.archiveName)*/
+
+task zip(type: Zip, overwrite:true) {
+
+	from file("${project.libsDir}${File.separator}${jar.archiveName}")
+	from ('scripts/') {
+		into 'scripts'
+	}
+	from('.') {
+		include '*.yml'
+	}
+}
